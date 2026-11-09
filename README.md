@@ -135,3 +135,25 @@ This script isolates network-layer variables. If the complex 802.1X TLS handshak
 ```bash
 python3 /scripts/radius_trigger.py
 ```
+## Phase 5: Enterprise 802.1X PEAP/MSCHAPv2 Simulation
+
+To simulate a true enterprise wireless client connecting to a corporate SSID, we use the `eapol_test` binary. 
+
+### Network Profile (`eapol_test.conf`)
+```text
+network={
+        ssid="HPE_Mist_Corp"
+        key_mgmt=IEEE8021X
+        eap=PEAP
+        identity="mateo_test"
+        password="WirelessAuth2026"
+        phase2="autheap=MSCHAPV2"
+}
+```
+
+**Description:**
+Modern 802.1X networks utilize a "tunnel inside a tunnel" approach. This configuration defines Phase 1 (`eap=PEAP`), which establishes a secure, encrypted TLS outer tunnel with the RADIUS server to protect the user's identity. Inside that secure tunnel, Phase 2 (`phase2="autheap=MSCHAPV2"`) executes the actual cryptographic challenge-response handshake to validate the password without sending it in plaintext.
+
+```bash
+eapol_test -c /scripts/eapol_test.conf -a 172.20.0.5 -p 1812 -s hpe_radius_secret_2026
+```
