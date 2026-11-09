@@ -87,3 +87,12 @@ echo '' >> radius_config/users
 docker cp radius_config/users hpe_freeradius:/etc/freeradius/mods-config/files/authorize
 docker restart hpe_freeradius
 ```
+## Phase 3: Client Toolchain & Dependency Management
+
+The Ubuntu supplicant container acts as our simulated enterprise endpoint. Dependencies including `eapoltest`, `tshark`, and the official `freeradius-common` dictionary packages are installed via an interactive root shell.
+
+```bash
+docker exec -it hpe_supplicant bash
+apt update && apt install -y python3 python3-pip freeradius-common eapoltest tshark
+python3 -m pip install pyrad pyshark --break-system-packages
+```
