@@ -216,3 +216,15 @@ if __name__ == '__main__':
 **Description:**
 *   **Packet Inspection:** The script binds directly to `eth0`. Instead of processing all network noise, it applies a strict Berkeley Packet Filter (`bpf_filter`) to capture only RADIUS traffic (UDP 1812) and EAPOL frames (EtherType 0x888e) at the kernel level.
 *   **Systems Debugging (Monkey-Patching):** The base Ubuntu image utilizes Python 3.14, which removed legacy `asyncio` threading watchers. Because the `pyshark` dependency has not yet caught up to this deprecation, the script would crash on startup. The inclusion of the monkey-patch intercepts `pyshark`'s calls to the missing functions and returns a dummy object, successfully bypassing the fatal exception and allowing the packet capture to initialize.
+
+### Testing the Automation
+
+To execute the test, two terminal windows are utilized simultaneously to capture the real-time event.
+
+```bash
+# Terminal 1: Start the automated monitor
+docker exec -it hpe_supplicant python3 /scripts/auth_monitor.py
+
+# Terminal 2: Trigger the handshake
+docker exec -it hpe_supplicant eapol_test -c /scripts/eapol_test.conf -a 172.20.0.5 -p 1812 -s hpe_radius_secret_2026
+```
