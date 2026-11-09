@@ -228,3 +228,5 @@ docker exec -it hpe_supplicant python3 /scripts/auth_monitor.py
 # Terminal 2: Trigger the handshake
 docker exec -it hpe_supplicant eapol_test -c /scripts/eapol_test.conf -a 172.20.0.5 -p 1812 -s hpe_radius_secret_2026
 ```
+### Failure Scenario Testing
+By intentionally corrupting the TLS payload (configuring the client with the wrong password), the script actively intercepts the failed inner-tunnel negotiation and alerts the user to the `Access-Reject` instantly. Restoring the configuration file proves the agent's real-time continuous monitoring capabilities, eliminating the need to manually export `.pcap` files to Wireshark for every connection attempt.
