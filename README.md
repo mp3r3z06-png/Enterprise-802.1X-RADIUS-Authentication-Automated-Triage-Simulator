@@ -167,7 +167,7 @@ import pyshark
 import time
 import asyncio
 
-# --- Python 3.14 Compatibility Monkey-Patch ---
+#  Python 3.14 Compatibility Monkey-Patch 
 # Newer Python versions aggressively deprecated legacy asyncio thread watchers.
 # Pyshark relies on these deprecated watchers during initialization.
 # This patch dynamically mocks the expected objects to prevent runtime crashes.
@@ -183,7 +183,6 @@ if not hasattr(asyncio, 'get_child_watcher'):
     asyncio.get_child_watcher = lambda: DummyWatcher()
 if not hasattr(asyncio, 'SafeChildWatcher'):
     asyncio.SafeChildWatcher = DummyWatcher
-# ----------------------------------------------
 
 def monitor_auth():
     # Force event loop creation for the main thread
