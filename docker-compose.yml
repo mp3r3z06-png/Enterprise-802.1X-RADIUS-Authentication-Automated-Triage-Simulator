@@ -1,0 +1,33 @@
+services:
+  freeradius:
+    image: freeradius/freeradius-server:latest
+    container_name: hpe_freeradius
+    command: ["-X"]
+    ports:
+      - "1812:1812/udp" # RADIUS Authentication
+      - "1813:1813/udp" # RADIUS Accounting
+    volumes:
+      - ./radius_config/clients.conf:/etc/freeradius/clients.conf
+    networks:
+      hpe_lab_net:
+        ipv4_address: 172.20.0.5
+
+  radius_client:
+    image: ubuntu:latest
+    container_name: hpe_supplicant
+    cap_add:
+      - NET_ADMIN 
+    volumes:
+      - ./scripts:/scripts
+      - ./pcaps:/pcaps 
+    networks:
+      hpe_lab_net:
+        ipv4_address: 172.20.0.10
+    command: tail -f /dev/null 
+
+networks:
+  hpe_lab_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
