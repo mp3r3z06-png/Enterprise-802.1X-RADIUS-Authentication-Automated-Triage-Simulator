@@ -73,3 +73,17 @@ networks:
 ```bash
 docker compose up -d
 ```
+
+## Phase 2: RADIUS Configuration & Dynamic Credential Injection
+
+The FreeRADIUS server requires a recognized NAS client and a user database. The `clients.conf` file is mapped via a standard Docker volume to define the AES shared secret (`hpe_radius_secret_2026`).
+
+**The WSL Volume Mapping Workaround:**
+Due to a known Docker daemon bug on Windows Subsystem for Linux (WSL) where dynamically mapped single text files are occasionally corrupted into blank directories, the plaintext user credentials must be generated locally without hidden carriage returns (CRLF) and forcefully injected into the running container via `docker cp`.
+
+```bash
+echo 'mateo_test Cleartext-Password := "WirelessAuth2026"' > radius_config/users
+echo '' >> radius_config/users
+docker cp radius_config/users hpe_freeradius:/etc/freeradius/mods-config/files/authorize
+docker restart hpe_freeradius
+```
